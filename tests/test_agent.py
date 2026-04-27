@@ -5,7 +5,7 @@ from pydantic_ai import capture_run_messages
 from pydantic_ai.models.test import TestModel
 
 from snoo_news.agent import TARGET_SUBREDDITS, agent, run_digest
-from snoo_news.models import Digest, RedditPost
+from snoo_news.models import ArticleContent, Digest, RedditPost
 from snoo_news.reddit import RedditClient
 
 
@@ -14,6 +14,15 @@ class StubRedditClient(RedditClient):
 
     def __init__(self) -> None:
         self.calls: list[tuple[str, int]] = []
+        self.article_calls: list[str] = []
+
+    async def fetch_article(self, url: str) -> ArticleContent | None:
+        self.article_calls.append(url)
+        if "/story" in url:
+            return ArticleContent(
+                url=url, title="Stub", content="Stub article body."
+            )
+        return None
 
     async def fetch_hot(self, subreddit: str, limit: int = 10) -> list[RedditPost]:
         self.calls.append((subreddit, limit))
@@ -61,6 +70,14 @@ async def test_agent_calls_tool_and_returns_digest():
     }
     # TestModel should have invoked the tool at least once.
     assert tool_call_subs, "TestModel did not invoke get_hot_posts"
+
+    tool_names = {
+        getattr(part, "tool_name", "")
+        for msg in messages
+        for part in getattr(msg, "parts", [])
+        if getattr(part, "part_kind", "") == "tool-call"
+    }
+    assert "get_article" in tool_names, "TestModel did not invoke get_article"
 
 
 @pytest.mark.asyncio

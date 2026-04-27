@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -14,6 +16,12 @@ class RedditPost(BaseModel):
     stickied: bool = False
 
 
+class ArticleContent(BaseModel):
+    url: str
+    title: str | None = None
+    content: str
+
+
 class StorySummary(BaseModel):
     title: str
     subreddit: str
@@ -22,6 +30,7 @@ class StorySummary(BaseModel):
     reddit_url: str
     score: int
     num_comments: int
+    summary_source: Literal["article", "selftext", "title"] = "title"
 
 
 class Digest(BaseModel):

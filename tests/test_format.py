@@ -44,3 +44,17 @@ def test_format_groups_by_subreddit_and_includes_fields():
     news_index = out.index("r/news")
     tech_index = out.index("r/tech")
     assert news_index < tech_index, "subreddits should be sorted alphabetically"
+
+
+def test_format_renders_summary_source_tag():
+    digest = Digest(
+        stories=[
+            _story(subreddit="news", title="From article", summary_source="article"),
+            _story(subreddit="news", title="From selftext", summary_source="selftext"),
+            _story(subreddit="news", title="From title", summary_source="title"),
+        ]
+    )
+    out = format_digest(digest)
+    assert "[via article]" in out
+    assert "[via Reddit]" in out
+    assert "[title only]" in out
