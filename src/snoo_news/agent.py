@@ -5,7 +5,7 @@ import os
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.models.anthropic import AnthropicModelSettings
 
-from .models import Digest, RedditPost
+from .models import ArticleContent, Digest, RedditPost
 from .reddit import RedditClient
 
 _raw_subs = os.environ.get("SNOO_SUBREDDITS", "news,tech")
@@ -24,12 +24,21 @@ Workflow:
      - meta posts about the subreddit itself
      - polls, memes, "I made this" personal posts
      - tabloid / clearly low-quality sources when better alternatives exist
-3. For each selected post, write a NEUTRAL 2-3 sentence summary based ONLY on
-   the post title and selftext you were given. Do NOT invent facts the data
-   does not support. If the post has no selftext and the title is sparse,
-   keep the summary short and grounded in the title.
+3. For each selected post:
+     - If `is_self` is False, call `get_article(post.url)` to retrieve the
+       linked article body. `get_article` returns None for self-posts,
+       image/video/social hosts (Reddit, imgur, YouTube, Twitter/X), paywalls,
+       and fetch failures.
+     - If `get_article` returns content, write a NEUTRAL 2-3 sentence summary
+       grounded in that article content (ignore boilerplate/ads -- the
+       extractor strips most). Set summary_source to "article".
+     - Otherwise, fall back to the post title and selftext. Use
+       summary_source "selftext" if selftext is non-empty, else "title".
+   Do NOT invent facts the data does not support. Keep summaries neutral and
+   concise (2-3 sentences).
 4. Return a `Digest` containing every selected story, populating
-   article_url from the post `url` and reddit_url from the post `permalink`.
+   article_url from the post `url`, reddit_url from the post `permalink`,
+   and summary_source per the rule above.
 
 Aim for roughly 8-12 stories total across all subreddits.
 """
@@ -60,6 +69,15 @@ async def get_hot_posts(
 ) -> list[RedditPost]:
     """Fetch hot posts from a subreddit, with stickied/NSFW filtered out."""
     return await ctx.deps.fetch_hot(subreddit, limit=limit)
+
+
+@agent.tool
+async def get_article(
+    ctx: RunContext[RedditClient],
+    url: str,
+) -> ArticleContent | None:
+    """Fetch and extract article text. Returns None for self-posts, image/video/social hosts, paywalls, or fetch failures."""
+    return await ctx.deps.fetch_article(url)
 
 
 async def run_digest(client: RedditClient) -> Digest:

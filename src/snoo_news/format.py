@@ -21,9 +21,17 @@ def format_digest(digest: Digest) -> str:
         lines.append(f"r/{sub}")
         lines.append("-" * 72)
         for story in by_sub[sub]:
-            lines.append(
+            src_tag = {
+                "article": "[via article]",
+                "selftext": "[via Reddit]",
+                "title": "[title only]",
+            }.get(story.summary_source, "")
+            header = (
                 f"[score={story.score}  comments={story.num_comments}]  {story.title}"
             )
+            if src_tag:
+                header += f"  {src_tag}"
+            lines.append(header)
             lines.append(f"  {story.summary}")
             lines.append(f"  Article: {story.article_url}")
             lines.append(f"  Reddit:  {story.reddit_url}")

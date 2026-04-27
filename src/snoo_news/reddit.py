@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import httpx
 
-from .models import RedditPost
+from .models import ArticleContent, RedditPost
 
 REDDIT_BASE = "https://www.reddit.com"
 DEFAULT_USER_AGENT = "snoo-news/0.1 (by /u/snoo-news-agent)"
@@ -60,3 +60,7 @@ class RedditClient:
                 )
             )
         return posts
+
+    async def fetch_article(self, url: str) -> ArticleContent | None:
+        from .article import fetch_article as _fetch_article
+        return await _fetch_article(url, self._client)
