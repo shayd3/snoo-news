@@ -1,0 +1,68 @@
+{
+  "kind": "Listing",
+  "data": {
+    "after": "t3_xxxxxx",
+    "children": [
+      {
+        "kind": "t3",
+        "data": {
+          "subreddit": "news",
+          "title": "Daily Discussion Megathread",
+          "url": "https://reddit.com/r/news/comments/sticky1",
+          "permalink": "/r/news/comments/sticky1/daily_discussion/",
+          "score": 120,
+          "num_comments": 4567,
+          "selftext": "Sticky thread.",
+          "is_self": true,
+          "over_18": false,
+          "stickied": true
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "subreddit": "news",
+          "title": "City council passes new transit plan after months of debate",
+          "url": "https://example.com/news/transit-plan",
+          "permalink": "/r/news/comments/abc123/city_council_passes_new_transit_plan/",
+          "score": 5234,
+          "num_comments": 1289,
+          "selftext": "",
+          "is_self": false,
+          "over_18": false,
+          "stickied": false
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "subreddit": "news",
+          "title": "NSFW investigative piece on graphic incident",
+          "url": "https://example.com/nsfw",
+          "permalink": "/r/news/comments/nsfw1/nsfw_piece/",
+          "score": 800,
+          "num_comments": 100,
+          "selftext": "",
+          "is_self": false,
+          "over_18": true,
+          "stickied": false
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "subreddit": "news",
+          "title": "Major weather system causes power outages across the region",
+          "url": "https://example.com/weather/outages",
+          "permalink": "/r/news/comments/def456/weather_outages/",
+          "score": 3120,
+          "num_comments": 540,
+          "selftext": "",
+          "is_self": false,
+          "over_18": false,
+          "stickied": false
+        }
+      }
+    ]
+  }
+}
